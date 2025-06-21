@@ -16,3 +16,15 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
+
+model Links {
+  id        String   @id @default(uuid())
+  url       String
+  title     String
+  imageUrl  String?
+  domain    String
+  summary   String?
+  tags      String[] @default([])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
