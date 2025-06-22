@@ -86,11 +86,6 @@ export const CreateLink = CustomTryCatch(async (req, res, next) => {
     console.log(`User With Id Do Not Exist: ${sub}`);
     return next(new AppError(`User With Id Do Not Exist: ${sub}`, 404));
   }
-  if (userFound.email !== email) {
-    logger.error(`User With email Do Not Exist: ${email}`);
-    console.log(`User With email Do Not Exist: ${email}`);
-    return next(new AppError(`User With email Do Not Exist: ${email}`, 404));
-  }
 
   const response = await axios.get(`${url}`);
   const html = response.data;
