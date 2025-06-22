@@ -1,9 +1,9 @@
 import express from "express";
 import cors from "cors";
 import { healthRouter } from "./routes/healthRouter.js";
-import { CustomErrorHandler } from "./middlewares/errorHandler.js";
 import { configDotenv } from "dotenv";
 import { logger } from "./utils/logger.js";
+import { CustomErrorHandler } from "./middleware/errorHandler.js";
 configDotenv();
 const PORT = process.env.PORT;
 const app = express();
