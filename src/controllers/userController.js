@@ -1,9 +1,9 @@
-import { prismaClient } from "../db/prisma";
-import { AppError } from "../utils/AppError";
-import { CustomTryCatch } from "../utils/CustomTryCatch";
-import { logger } from "../utils/logger";
+import { prismaClient } from "../db/prisma.js";
+import { AppError } from "../utils/AppError.js";
+import { CustomTryCatch } from "../utils/CustomTryCatch.js";
+import { logger } from "../utils/logger.js";
 import bcrypt from "bcrypt";
-import { TokenGenerator } from "../utils/TokenGenerator";
+import { TokenGenerator } from "../utils/TokenGenerator.js";
 
 export const CreateUser = CustomTryCatch(async (req, res, next) => {
   const { name, email, password } = req.body;
