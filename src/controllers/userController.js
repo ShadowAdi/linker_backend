@@ -31,7 +31,7 @@ export const CreateUser = CustomTryCatch(async (req, res, next) => {
   }
   const hashedPassword = await bcrypt.hash(password, 10);
 
-  const data = await prismaClient.user.create({
+  await prismaClient.user.create({
     data: {
       email,
       password: hashedPassword,
