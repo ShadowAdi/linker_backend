@@ -6,3 +6,4 @@ export const linkRouter = express.Router();
 
 
 linkRouter.get("/",CheckAuth,GetAllLinks)
+linkRouter.post("/",CheckAuth,GetAllLinks)
