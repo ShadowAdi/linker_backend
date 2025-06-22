@@ -4,6 +4,7 @@ import { healthRouter } from "./routes/healthRouter.js";
 import { configDotenv } from "dotenv";
 import { logger } from "./utils/logger.js";
 import { CustomErrorHandler } from "./middleware/errorHandler.js";
+import { userRouter } from "./routes/userRouter.js";
 configDotenv();
 const PORT = process.env.PORT;
 const app = express();
@@ -18,6 +19,8 @@ app.use(
 app.use(express.json());
 
 app.use("/api/health", healthRouter);
+app.use("/api/user", userRouter);
+
 
 app.use(CustomErrorHandler);
 
