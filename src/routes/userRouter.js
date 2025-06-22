@@ -1,6 +1,7 @@
 import express from "express";
-import { healthCheck } from "../controllers/healthController.js";
+import { CreateUser, LoginUser } from "../controllers/userController.js";
 
 export const userRouter = express.Router();
 
-// userRouter.get("/", );
+userRouter.post("/", CreateUser);
+userRouter.post("/login/", LoginUser);
