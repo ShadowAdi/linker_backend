@@ -2,6 +2,8 @@ import { prismaClient } from "../db/prisma";
 import { AppError } from "../utils/AppError";
 import { CustomTryCatch } from "../utils/CustomTryCatch";
 import { logger } from "../utils/logger";
+import bcrypt from "bcrypt";
+import { TokenGenerator } from "../utils/TokenGenerator";
 
 export const CreateUser = CustomTryCatch(async (req, res, next) => {
   const { name, email, password } = req.body;
@@ -38,7 +40,53 @@ export const CreateUser = CustomTryCatch(async (req, res, next) => {
   });
   return res.status(201).json({
     success: true,
-    message: "Yser Is Created",
-    user: data,
+    message: "User Is Created",
+  });
+});
+
+export const LoginUser = CustomTryCatch(async (req, res, next) => {
+  const { email, password } = req.body;
+  if (!email || !password) {
+    logger.error(
+      "Fields are not provided email: " +
+        email +
+        " and password is: " +
+        password
+    );
+    return next(
+      new AppError(
+        `Required Data is not present Email:${email},password:${password}`,
+        404
+      )
+    );
+  }
+
+  const user = await prismaClient.user.findUnique({ where: { email: email } });
+  if (!user) {
+    logger.error(`User don't exists with the mail: ${email}. Try To Register`);
+    return next(
+      new AppError(
+        `User already exists with the mail: ${email}. Try To Register`,
+        404
+      )
+    );
+  }
+  const isPasswordCorrect = await bcrypt.compare(password, user.password);
+  if (!isPasswordCorrect) {
+    logger.error(`Invalid Credentials`);
+    return next(new AppError(`Invalid Credentials`, 401));
+  }
+
+  const payload = {
+    email: user?.email,
+    sub: user.id,
+  };
+
+  const token = await TokenGenerator(payload);
+  return res.status(200).json({
+    token: token,
+    user,
+    success: true,
+    message: "Login Successfull",
   });
 });
