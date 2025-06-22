@@ -78,7 +78,7 @@ export const LoginUser = CustomTryCatch(async (req, res, next) => {
   }
 
   const payload = {
-    email: user?.email,
+    email: user.email,
     sub: user.id,
   };
 
