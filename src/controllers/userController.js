@@ -45,8 +45,8 @@ export const CreateUser = CustomTryCatch(async (req, res, next) => {
 });
 
 export const LoginUser = CustomTryCatch(async (req, res, next) => {
-  const { email, password } = req.body;
-  if (!email || !password) {
+  const { email, password: bodyPassword } = req.body;
+  if (!email || !bodyPassword) {
     logger.error(
       "Fields are not provided email: " +
         email +
@@ -71,7 +71,7 @@ export const LoginUser = CustomTryCatch(async (req, res, next) => {
       )
     );
   }
-  const isPasswordCorrect = await bcrypt.compare(password, user.password);
+  const isPasswordCorrect = await bcrypt.compare(bodyPassword, user.password);
   if (!isPasswordCorrect) {
     logger.error(`Invalid Credentials`);
     return next(new AppError(`Invalid Credentials`, 401));
@@ -82,10 +82,12 @@ export const LoginUser = CustomTryCatch(async (req, res, next) => {
     sub: user.id,
   };
 
+  const { password, ...data } = user;
+
   const token = await TokenGenerator(payload);
   return res.status(200).json({
     token: token,
-    user,
+    data,
     success: true,
     message: "Login Successfull",
   });

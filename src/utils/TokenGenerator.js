@@ -6,11 +6,11 @@ configDotenv();
 
 export const TokenGenerator = async (payload) => {
   try {
-    const Jwt_Secret = process.env.JWT_SECRET_KEY;
+    const Jwt_Secret = process.env.JWT_SECRET;
     if (!Jwt_Secret) {
       console.log("Jwt Secret Key is not found ", Jwt_Secret);
       logger.error("Jwt Secret Key is not found " + Jwt_Secret);
-      return next(new AppError(`Internal Server Error`, 500));
+      throw new AppError(`Internal Server Error`, 500);
     }
     const token = jwt.sign(payload, Jwt_Secret, {
       algorithm: "HS256",
@@ -20,6 +20,6 @@ export const TokenGenerator = async (payload) => {
   } catch (error) {
     console.log("Some Error in creating Token ", error);
     logger.error("Error in creating Token  " + error);
-    return next(new AppError(`Internal Server Error`, 500));
+     throw new AppError(`Internal Server Error`, 500);
   }
 };
