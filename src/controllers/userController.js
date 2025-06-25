@@ -55,7 +55,7 @@ export const LoginUser = CustomTryCatch(async (req, res, next) => {
     );
     return next(
       new AppError(
-        `Required Data is not present Email:${email},password:${password}`,
+        `Required Data is not present Email:${email},password:${bodyPassword}`,
         404
       )
     );
