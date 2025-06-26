@@ -66,19 +66,43 @@ model Links {
 
 Fields like summary and tags are planned for future use with Gemini AI integration.
 
-🔧 Setup
 
-cd backend
+## 🚀 Getting Started (GitHub Setup)
+
+### 1. Clone the Repository
+
+```bash
+git clone https://github.com/ShadowAdi/linker_backend.git
+cd linker_backend
+
+You’ll need Node.js, PostgreSQL (Neon), and Prisma CLI installed globally.
+
+2. Install Dependencies
+
 npm install
-npx prisma generate
-npx prisma migrate dev --name init
-npm run dev
 
-Ensure your .env contains:
+3. Setup Environment Variables
+
+Create a .env file in the backend root:
 
 PORT=3000
-DATABASE_URL=postgresql://...
-JWT_SECRET=your-secret
+DATABASE_URL=your-neon-postgresql-url
+JWT_SECRET=your-very-secure-secret
+
+4. Generate Prisma Client
+
+npx prisma generate
+
+5. Run Migrations
+
+npx prisma migrate dev --name init
+
+6. Start the Server
+
+npm run dev
+
+API will be live at: http://localhost:3000/api
+
 
 💡 Tech Highlights
 
