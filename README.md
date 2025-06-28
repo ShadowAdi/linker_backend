@@ -101,6 +101,8 @@ npx prisma migrate dev --name init
 
 npm run dev
 
+```
+
 API will be live at: http://localhost:3000/api
 
 
@@ -115,4 +117,10 @@ Metadata scraping via Cheerio and Axios
 Modular routes for user and links
 
 Secure CORS setup for frontend at localhost:5173
+
+
+# **Demo Video**
+You Can Find this inside the Demo Folder if https://github.com/ShadowAdi/linker_frontend
+Github - https://github.com/ShadowAdi/linker_frontend/blob/master/demo/Linker%20Demo.mp4
+Drive - https://drive.google.com/file/d/1k-gYXRSA59fiU7Z2WrLtORUzcAT2tYjz/view?usp=sharing
 
