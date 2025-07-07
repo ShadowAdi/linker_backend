@@ -47,6 +47,7 @@ model User {
   folderCollaborators FolderCollaborator[]
   folderDiscussions   FolderDiscussions[]
   discussionMessages  DiscussionMessages[]
+  folderInvites FolderInvite[]
 }
 
 model Folders {
@@ -66,6 +67,7 @@ model Folders {
   followers           User[]               @relation("UserFollowFolders")
   folderCollaborators FolderCollaborator[]
   folderDiscussions   FolderDiscussions[]
+  folderInvites FolderInvite[]
 }
 
 model Links {
@@ -146,4 +148,24 @@ model DiscussionMessages {
   parentMessageId Int?
   parentMessage   DiscussionMessages?  @relation("MessageReplies", fields: [parentMessageId], references: [id])
   replies         DiscussionMessages[] @relation("MessageReplies")
+}
+
+model FolderInvite {
+  id          Int      @id @default(autoincrement())
+  folderId    Int
+  folder      Folders  @relation(fields: [folderId], references: [id])
+  invitedEmail String
+  inviterId   Int
+  inviter     User     @relation(fields: [inviterId], references: [id])
+  status      InviteStatus @default(PENDING)
+  token       String   @unique
+  createdAt   DateTime @default(now())
+  expiresAt   DateTime
+}
+
+enum InviteStatus {
+  PENDING
+  ACCEPTED
+  DECLINED
+  EXPIRED
 }
