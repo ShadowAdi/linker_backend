@@ -32,36 +32,36 @@ model SocialMediaUrls {
 }
 
 model User {
-  id            Int               @id @default(autoincrement())
-  name          String
-  email         String            @unique
-  password      String
-  profileUrl    String
-  bio           String?
-  socialLinks   SocialMediaUrls[]
-  createdAt     DateTime          @default(now())
-  updatedAt     DateTime          @updatedAt
-  folders       Folders[]         @relation("UserFolders")
-  profile       Profiles[]
-  folderFollows Folders[]         @relation("UserFollowFolders")
-  folderCollaborator FolderCollaborator[]
+  id                  Int                  @id @default(autoincrement())
+  name                String
+  email               String               @unique
+  password            String
+  profileUrl          String
+  bio                 String?
+  socialLinks         SocialMediaUrls[]
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+  folders             Folders[]            @relation("UserFolders")
+  profile             Profiles[]
+  folderFollows       Folders[]            @relation("UserFollowFolders")
+  folderCollaborators FolderCollaborator[] // changed from singular
 }
 
 model Folders {
-  id                 Int      @id @default(autoincrement())
-  folderName         String   @unique
-  folderCoverImage   String?
-  folderProfileImage String?
-  folderDescription  String?
-  folderTags         String[] @default([])
-  isPublishable      Boolean  @default(false)
-  folderShareUrl     String?
-  createdAt          DateTime @default(now())
-  updatedAt          DateTime @updatedAt
-  userId             Int
-  user               User     @relation(fields: [userId], references: [id], name: "UserFolders")
-  Links              Links[]
-  followers          User[]   @relation("UserFollowFolders")
+  id                  Int                  @id @default(autoincrement())
+  folderName          String               @unique
+  folderCoverImage    String?
+  folderProfileImage  String?
+  folderDescription   String?
+  folderTags          String[]             @default([])
+  isPublishable       Boolean              @default(false)
+  folderShareUrl      String?
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+  userId              Int
+  user                User                 @relation(fields: [userId], references: [id], name: "UserFolders")
+  Links               Links[]
+  followers           User[]               @relation("UserFollowFolders")
   folderCollaborators FolderCollaborator[]
 }
 
@@ -107,13 +107,13 @@ model Profiles {
   unHits            Int      @default(0)
 }
 
-
 model FolderCollaborator {
-  id Int @id @default(autoincrement())
-  folder Folders @relation(fields: [folderId],references: [id])
+  id       Int              @id @default(autoincrement())
+  folder   Folders          @relation(fields: [folderId], references: [id])
   folderId Int
-  user User @relation(fields: [userId],references: [id])
-  userId Int
-  role CollaboratorRole @default(VIEWER)
-  @@unique([folderId,userId])
+  user     User             @relation(fields: [userId], references: [id])
+  userId   Int
+  role     CollaboratorRole @default(VIEWER)
+
+  @@unique([folderId, userId])
 }
