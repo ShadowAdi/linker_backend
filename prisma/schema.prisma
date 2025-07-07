@@ -15,6 +15,12 @@ enum LastStatus {
   ERROR
 }
 
+enum CollaboratorRole {
+  OWNER
+  EDITOR
+  VIEWER
+}
+
 model SocialMediaUrls {
   id        Int      @id @default(autoincrement())
   key       String
@@ -38,6 +44,7 @@ model User {
   folders       Folders[]         @relation("UserFolders")
   profile       Profiles[]
   folderFollows Folders[]         @relation("UserFollowFolders")
+  folderCollaborator FolderCollaborator[]
 }
 
 model Folders {
@@ -55,6 +62,7 @@ model Folders {
   user               User     @relation(fields: [userId], references: [id], name: "UserFolders")
   Links              Links[]
   followers          User[]   @relation("UserFollowFolders")
+  folderCollaborators FolderCollaborator[]
 }
 
 model Links {
@@ -97,4 +105,15 @@ model Profiles {
   copyCount         Int      @default(0)
   hits              Int      @default(0)
   unHits            Int      @default(0)
+}
+
+
+model FolderCollaborator {
+  id Int @id @default(autoincrement())
+  folder Folders @relation(fields: [folderId],references: [id])
+  folderId Int
+  user User @relation(fields: [userId],references: [id])
+  userId Int
+  role CollaboratorRole @default(VIEWER)
+  @@unique([folderId,userId])
 }
