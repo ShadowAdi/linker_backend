@@ -46,6 +46,7 @@ model User {
   folderFollows       Folders[]            @relation("UserFollowFolders")
   folderCollaborators FolderCollaborator[]
   folderDiscussions   FolderDiscussions[]
+  discussionMessages  DiscussionMessages[]
 }
 
 model Folders {
@@ -64,7 +65,7 @@ model Folders {
   Links               Links[]
   followers           User[]               @relation("UserFollowFolders")
   folderCollaborators FolderCollaborator[]
-  folderDiscussion    FolderDiscussions[]
+  folderDiscussions    FolderDiscussions[]
 }
 
 model Links {
@@ -121,12 +122,28 @@ model FolderCollaborator {
 }
 
 model FolderDiscussions {
-  id        Int      @id @default(autoincrement())
+  id        Int                  @id @default(autoincrement())
   userId    Int
-  User      User     @relation(fields: [userId], references: [id])
+  User      User                 @relation(fields: [userId], references: [id])
   folderId  Int
-  folder    Folders  @relation(fields: [folderId], references: [id])
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  folder    Folders              @relation(fields: [folderId], references: [id])
+  createdAt DateTime             @default(now())
+  updatedAt DateTime             @updatedAt
   name      String
+  messages  DiscussionMessages[]
+}
+
+model DiscussionMessages {
+  id              Int                @id @default(autoincrement())
+  discussionId    Int
+  discussion      FolderDiscussions  @relation(fields: [discussionId], references: [id])
+  userId          Int
+  user            User               @relation(fields: [userId], references: [id])
+  content         String
+  createdAt       DateTime           @default(now())
+  updatedAt       DateTime           @updatedAt
+  isEdited        Boolean            @default(false)
+  parentMessageId Int?               
+  parentMessage   DiscussionMessages? @relation("MessageReplies", fields: [parentMessageId], references: [id])
+  replies         DiscussionMessages[] @relation("MessageReplies")
 }
