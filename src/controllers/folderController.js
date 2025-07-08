@@ -136,6 +136,14 @@ export const GetFolder = CustomTryCatch(async (req, res, next) => {
 
   const userId = user.sub;
 
+  const userFound = await prismaClient.user.findUnique({
+    where: { id: userId },
+  });
+  if (!userFound) {
+    logger.error(`User with id does not exist: ${userId}`);
+    return next(new AppError(`User with id does not exist: ${userId}`, 404));
+  }
+
   const { folderId } = req.query;
   if (!folderId) {
     logger.error(`Folder Id Not Provided`);
@@ -258,3 +266,75 @@ export const GetFolder = CustomTryCatch(async (req, res, next) => {
   });
 });
 
+export const DeleteFolder = CustomTryCatch(async (req, res, next) => {
+  const user = req.user;
+  if (!user || !user.sub) {
+    logger.error(`Failed to get the authenticated user`);
+    return next(new AppError(`Failed to get the authenticated user`, 404));
+  }
+
+  const userId = user.sub;
+
+  const userFound = await prismaClient.user.findUnique({
+    where: { id: userId },
+  });
+  if (!userFound) {
+    logger.error(`User with id does not exist: ${userId}`);
+    return next(new AppError(`User with id does not exist: ${userId}`, 404));
+  }
+
+  const folderId = Number(req.query.folderId);
+  if (!folderId || isNaN(folderId)) {
+    logger.error(`Invalid or missing Folder Id`);
+    return next(new AppError(`Invalid or missing Folder Id`, 400));
+  }
+
+  const folder = await prismaClient.folders.findUnique({
+    where: { id: folderId },
+  });
+  if (!folder) {
+    return next(new AppError(`Folder does not exist: ${folderId}`, 404));
+  }
+  if (folder.userId !== userId) {
+    return next(new AppError(`Not authorized to delete this folder`, 403));
+  }
+
+  await prismaClient.$transaction([
+    prismaClient.discussionMessages.deleteMany({
+      where: {
+        discussion: {
+          folderId: folderId,
+        },
+      },
+    }),
+    prismaClient.folderDiscussions.deleteMany({
+      where: {
+        folderId: folderId,
+      },
+    }),
+    prismaClient.folderCollaborator.deleteMany({
+      where: {
+        folderId: folderId,
+      },
+    }),
+    prismaClient.folderInvite.deleteMany({
+      where: {
+        folderId: folderId,
+      },
+    }),
+    prismaClient.links.deleteMany({
+      where: {
+        folderId: folderId,
+      },
+    }),
+    prismaClient.folders.delete({
+      where: {
+        id: folderId,
+      },
+    }),
+  ]);
+  return res.status(200).json({
+    message: "Folder deleted successfully",
+    success: true,
+  });
+});
