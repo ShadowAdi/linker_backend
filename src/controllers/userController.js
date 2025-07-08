@@ -210,3 +210,54 @@ export const UpdateUser = CustomTryCatch(async (req, res, next) => {
     message: "User is updated",
   });
 });
+
+export const DeleteUser = CustomTryCatch(async (req, res, next) => {
+  const user = req.user;
+  if (!user || !user.sub) {
+    logger.error(`Failed to get the authenticated user`);
+    return next(new AppError(`Failed to get the authenticated user`, 404));
+  }
+
+  const userId = user.sub;
+
+  const userFound = await prismaClient.user.findUnique({
+    where: { id: userId },
+  });
+  if (!userFound) {
+    logger.error(`User with id does not exist: ${userId}`);
+    return next(new AppError(`User with id does not exist: ${userId}`, 404));
+  }
+
+  await prismaClient.$transaction([
+    prismaClient.folderCollaborator.deleteMany({
+      where: { userId },
+    }),
+    prismaClient.folderInvite.deleteMany({
+      where: { inviterId: userId },
+    }),
+    prismaClient.discussionMessages.deleteMany({
+      where: { userId },
+    }),
+    prismaClient.folderDiscussions.deleteMany({
+      where: { userId },
+    }),
+    prismaClient.profiles.deleteMany({
+      where: { userId },
+    }),
+    prismaClient.socialMediaUrls.deleteMany({
+      where: { userId },
+    }),
+    prismaClient.folders.deleteMany({
+      where: { userId },
+    }),
+    prismaClient.user.delete({
+      where: { id: userId },
+    }),
+  ]);
+
+  return res.status(200).json({
+    message: "User is deleted",
+    success: true,
+  });
+});
+
