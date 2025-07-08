@@ -6,7 +6,7 @@ import bcrypt from "bcrypt";
 import { TokenGenerator } from "../utils/TokenGenerator.js";
 
 export const CreateUser = CustomTryCatch(async (req, res, next) => {
-  const { name, email, password } = req.body;
+  const { name, email, password, profileUrl, bio, socialLinks } = req.body;
   if (!email || !password || !name) {
     logger.error(
       "Fields are not provided email: " +
@@ -31,11 +31,24 @@ export const CreateUser = CustomTryCatch(async (req, res, next) => {
   }
   const hashedPassword = await bcrypt.hash(password, 10);
 
+  const socialLinksArray =
+    socialLinks && typeof socialLinks === "object"
+      ? Object.entries(socialLinks).map(([key, value]) => ({
+          key,
+          value,
+        }))
+      : [];
+
   await prismaClient.user.create({
     data: {
       email,
       password: hashedPassword,
       name,
+      profileUrl: profileUrl ? profileUrl : "",
+      bio: bio ? bio : "",
+      socialLinks: socialLinksArray.length
+        ? { create: socialLinks }
+        : undefined,
     },
   });
   return res.status(201).json({
