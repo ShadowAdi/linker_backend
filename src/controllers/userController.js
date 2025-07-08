@@ -44,10 +44,10 @@ export const CreateUser = CustomTryCatch(async (req, res, next) => {
       email,
       password: hashedPassword,
       name,
-      profileUrl: profileUrl ? profileUrl : "",
-      bio: bio ? bio : "",
+      profileUrl: profileUrl || undefined,
+      bio: bio || undefined,
       socialLinks: socialLinksArray.length
-        ? { create: socialLinks }
+        ? { create: socialLinksArray }
         : undefined,
     },
   });
@@ -148,5 +148,65 @@ export const AuthenticatedUser = CustomTryCatch(async (req, res, next) => {
     user: userFound,
     message: "User Found",
     success: true,
+  });
+});
+
+export const UpdateUser = CustomTryCatch(async (req, res, next) => {
+  const user = req.user;
+  if (!user) {
+    logger.error(`Failed to get the authenticated user ${user}`);
+    console.log(`Failed to get the authenticated user ${user}`);
+    return next(
+      new AppError(`Failed to get the authenticated user ${user}`, 404)
+    );
+  }
+  const { sub } = user;
+  if (!sub) {
+    logger.error(`Failed to get the authenticated user ${sub}`);
+    console.log(`Failed to get the authenticated user ${sub}`);
+    return next(
+      new AppError(`Failed to get the authenticated user ${sub}`, 404)
+    );
+  }
+  const userFound = await prismaClient.user.findUnique({
+    where: { id: sub },
+  });
+  if (!userFound) {
+    logger.error(`User With Id Do Not Exist: ${sub}`);
+    console.log(`User With Id Do Not Exist: ${sub}`);
+    return next(new AppError(`User With Id Do Not Exist: ${sub}`, 404));
+  }
+
+  const data = req.body;
+  const updateData = {};
+  if (data.name !== undefined) updateData.name = data.name;
+  if (data.bio !== undefined) updateData.bio = data.bio;
+  if (data.profileUrl !== undefined) updateData.profileUrl = data.profileUrl;
+
+  await prismaClient.user.update({
+    where: { id: user.sub },
+    data: updateData,
+  });
+
+  if (data.socialLinks && typeof data.socialLinks === "object") {
+    const socialLinksArray = Object.entries(data.socialLinks).map([key, value]);
+    await prismaClient.socialMediaUrls.deleteMany({
+      where: {
+        userId: sub,
+      },
+    });
+
+    if (socialLinksArray.length) {
+      await prismaClient.socialMediaUrls.createMany({
+        data: socialLinksArray.map((link) => ({
+          ...link,
+          userId: user.sub,
+        })),
+      });
+    }
+  }
+  return res.status(200).json({
+    success: true,
+    message: "User is updated",
   });
 });
