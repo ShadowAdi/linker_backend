@@ -36,7 +36,7 @@ model User {
   name                String
   email               String               @unique
   password            String
-  profileUrl          String
+  profileUrl          String?
   bio                 String?
   socialLinks         SocialMediaUrls[]
   createdAt           DateTime             @default(now())
