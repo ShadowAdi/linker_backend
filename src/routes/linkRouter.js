@@ -5,6 +5,6 @@ import { CheckAuth } from "../middleware/AuthCheck.js";
 export const linkRouter = express.Router();
 
 
-linkRouter.get("/",CheckAuth,GetAllLinks)
+linkRouter.get("/:folderId",CheckAuth,GetAllLinks)
 linkRouter.post("/",CheckAuth,CreateLink)
 linkRouter.get("/:linkId",CheckAuth,GetSingleLink)

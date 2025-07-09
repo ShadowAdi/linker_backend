@@ -47,7 +47,7 @@ model User {
   folderCollaborators FolderCollaborator[]
   folderDiscussions   FolderDiscussions[]
   discussionMessages  DiscussionMessages[]
-  folderInvites FolderInvite[]
+  folderInvites       FolderInvite[]
 }
 
 model Folders {
@@ -67,7 +67,7 @@ model Folders {
   followers           User[]               @relation("UserFollowFolders")
   folderCollaborators FolderCollaborator[]
   folderDiscussions   FolderDiscussions[]
-  folderInvites FolderInvite[]
+  folderInvites       FolderInvite[]
 }
 
 model Links {
@@ -78,7 +78,10 @@ model Links {
   domain          String
   summary         String?
   pingInterval    Int        @default(3000)
-  isOnline        Boolean    @default(false)
+  isOnline        Boolean    @default(true)
+  customTags      String[]   @default([])
+  customSummary   String?
+  customTitle     String
   lastCheckedAt   String?
   lastStatus      LastStatus
   lastStatusCode  Int
@@ -151,16 +154,16 @@ model DiscussionMessages {
 }
 
 model FolderInvite {
-  id          Int      @id @default(autoincrement())
-  folderId    Int
-  folder      Folders  @relation(fields: [folderId], references: [id])
+  id           Int          @id @default(autoincrement())
+  folderId     Int
+  folder       Folders      @relation(fields: [folderId], references: [id])
   invitedEmail String
-  inviterId   Int
-  inviter     User     @relation(fields: [inviterId], references: [id])
-  status      InviteStatus @default(PENDING)
-  token       String   @unique
-  createdAt   DateTime @default(now())
-  expiresAt   DateTime
+  inviterId    Int
+  inviter      User         @relation(fields: [inviterId], references: [id])
+  status       InviteStatus @default(PENDING)
+  token        String       @unique
+  createdAt    DateTime     @default(now())
+  expiresAt    DateTime
 }
 
 enum InviteStatus {
