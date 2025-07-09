@@ -57,6 +57,20 @@ export const CreateUser = CustomTryCatch(async (req, res, next) => {
   });
 });
 
+export const GetAllUsers = CustomTryCatch(async (req, res, next) => {
+  const { name } = req.query;
+  const where = {
+    ...(name ? { name: { contains: name, mode: "insensitive" } } : {}),
+  };
+  const users = await prismaClient.user.findMany({ where });
+  return res.status(200).json({
+    message: "Users Found",
+    success: true,
+    users,
+    where
+  });
+});
+
 export const LoginUser = CustomTryCatch(async (req, res, next) => {
   const { email, password: bodyPassword } = req.body;
   if (!email || !bodyPassword) {
