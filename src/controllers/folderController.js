@@ -145,7 +145,7 @@ export const GetFolder = CustomTryCatch(async (req, res, next) => {
     return next(new AppError(`User with id does not exist: ${userId}`, 404));
   }
 
-  const { folderId } = req.query;
+  const { folderId } = req.params;
   if (!folderId) {
     logger.error(`Folder Id Not Provided`);
     return next(new AppError(`Folder Id Not Provided`, 404));
@@ -284,7 +284,7 @@ export const DeleteFolder = CustomTryCatch(async (req, res, next) => {
     return next(new AppError(`User with id does not exist: ${userId}`, 404));
   }
 
-  const folderId = Number(req.query.folderId);
+  const folderId = Number(req.params.folderId);
   if (!folderId || isNaN(folderId)) {
     logger.error(`Invalid or missing Folder Id`);
     return next(new AppError(`Invalid or missing Folder Id`, 400));
@@ -357,7 +357,7 @@ export const UpdateFolder = CustomTryCatch(async (req, res, next) => {
     return next(new AppError(`User with id does not exist: ${userId}`, 404));
   }
 
-  const folderId = Number(req.query.folderId);
+  const folderId = Number(req.params.folderId);
   if (!folderId || isNaN(folderId)) {
     logger.error(`Invalid or missing Folder Id`);
     return next(new AppError(`Invalid or missing Folder Id`, 400));
