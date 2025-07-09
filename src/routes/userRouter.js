@@ -4,6 +4,7 @@ import {
   CreateUser,
   DeleteUser,
   GetAllUsers,
+  GetSingleUser,
   LoginUser,
   UpdateUser,
 } from "../controllers/userController.js";

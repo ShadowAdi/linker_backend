@@ -67,7 +67,44 @@ export const GetAllUsers = CustomTryCatch(async (req, res, next) => {
     message: "Users Found",
     success: true,
     users,
-    where
+    where,
+  });
+});
+
+export const GetSingleUser = CustomTryCatch(async (req, res, next) => {
+  const { userId } = req.params;
+
+  const user = await prismaClient.user.findFirst({
+    where: {
+      id: Number(userId),
+    },
+    select: {
+      email: true,
+      createdAt: true,
+      id: true,
+      name: true,
+      bio: true,
+      profileUrl: true,
+
+      socialLinks: {
+        select: {
+          key: true,
+          value: true,
+        },
+      },
+      _count: {
+        select: {
+          folders: true,
+          folderDiscussions: true,
+          profile: true,
+        },
+      },
+    },
+  });
+  return res.status(200).json({
+    message: "User Found",
+    success: true,
+    user,
   });
 });
 

@@ -21,7 +21,7 @@ app.use(
 app.use(express.json());
 
 app.use("/api/health", healthRouter);
-app.use("/api/user", userRouter);
+app.use("/api/users", userRouter);
 app.use("/api/folders", folderRouter);
 app.use("/api/links", linkRouter);
 
