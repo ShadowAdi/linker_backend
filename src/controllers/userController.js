@@ -130,9 +130,50 @@ export const AuthenticatedUser = CustomTryCatch(async (req, res, next) => {
       createdAt: true,
       id: true,
       name: true,
-      Links: true,
+      bio: true,
+      profileUrl: true,
+
+      socialLinks: {
+        select: {
+          key: true,
+          value: true,
+        },
+      },
+
+      folders: {
+        select: {
+          folderCoverImage: true,
+          folderDescription: true,
+          folderName: true,
+          folderTags: true,
+          folderProfileImage: true,
+          folderShareUrl: true,
+          isPublishable: true,
+
+          followers: {
+            select: {
+              name: true,
+              id: true,
+              profileUrl: true,
+            },
+          },
+
+          _count: {
+            select: {
+              Links: true,
+            },
+          },
+        },
+      },
+
+      _count: {
+        select: {
+          folders: true,
+        },
+      },
     },
   });
+
   if (!userFound) {
     logger.error(`User With Id Do Not Exist: ${sub}`);
     console.log(`User With Id Do Not Exist: ${sub}`);
@@ -260,4 +301,3 @@ export const DeleteUser = CustomTryCatch(async (req, res, next) => {
     success: true,
   });
 });
-
